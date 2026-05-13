@@ -12,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="icon" type="image/jpeg" href="Logo.jpg">
   <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -25,12 +26,7 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-left">
-        <div class="logo-icon">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
-            <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-          </svg>
-        </div>
+        <img src="Logo.jpg" alt="DTR Calculator Logo" class="logo-img" />
         <div class="header-title">
           <h1>DTR Calculator</h1>
           <span class="header-subtitle">Daily Time Record</span>
@@ -203,6 +199,27 @@
             </svg>
             Save Settings
           </button>
+
+          <!-- Data Backup & Restore -->
+          <div class="section-divider" style="margin-top: 10px;">
+            <span>Data Backup & Restore</span>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-calculate" id="btnExportData" style="flex: 1; font-size: 0.85rem; padding: 10px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); color: var(--blue); box-shadow: none;">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin-right: 6px;">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Export
+            </button>
+            <button class="btn-calculate" id="btnImportData" style="flex: 1; font-size: 0.85rem; padding: 10px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: var(--green); box-shadow: none;">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin-right: 6px;">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Import
+            </button>
+            <input type="file" id="importFileInput" accept=".json" style="display: none;" />
+          </div>
+
         </div>
       </div>
     </div>
@@ -210,8 +227,9 @@
 
     <!-- Main Content -->
     <main class="main-content">
-      <!-- Date Picker Section -->
-      <section class="card date-card">
+      <div class="left-column">
+        <!-- Date Picker Section -->
+        <section class="card date-card">
         <div class="card-header">
           <div class="card-icon card-icon--blue">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -408,9 +426,11 @@
           </button>
         </div>
       </section>
+      </div>
 
-      <!-- Results Section -->
-      <section class="results-section" id="resultsSection" style="display:none;">
+      <div class="right-column">
+        <!-- Results Section -->
+        <section class="results-section" id="resultsSection" style="display:none;">
         <!-- Summary Cards -->
         <div class="results-grid">
           <div class="result-card result-card--hours">
@@ -581,10 +601,28 @@
         <div class="records-summary" id="recordsSummary"></div>
         <div class="records-list" id="recordsList"></div>
       </section>
+      </div>
     </main>
   </div>
 
   <div id="printArea"></div>
+
+  <!-- Custom Confirm Modal -->
+  <div class="custom-modal-overlay" id="confirmModalOverlay">
+    <div class="custom-modal">
+      <div class="modal-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+          <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h3 class="modal-title">Confirm Action</h3>
+      <p class="modal-message" id="confirmModalMessage">Are you sure?</p>
+      <div class="modal-actions">
+        <button class="btn-modal btn-modal-cancel" id="btnModalCancel">Cancel</button>
+        <button class="btn-modal btn-modal-confirm" id="btnModalConfirm">Confirm</button>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="app.js"></script>

@@ -209,6 +209,14 @@ function applyStartRule(rawMins) {
   return rawMins;
 }
 
+// Apply official end rule: cap time out at official end time
+function applyEndRule(rawMins) {
+  if (rawMins == null) return null;
+  const officialEndMins = toMins(settings.officialEndTime);
+  if (rawMins > officialEndMins) return officialEndMins;
+  return rawMins;
+}
+
 // ─── Calculation ──────────────────────────────────────────────────────────────
 function calculate(isAutoLoad = false, shouldSave = true) {
   const dateStr       = $('dtrDate').value;
@@ -265,6 +273,10 @@ function calculate(isAutoLoad = false, shouldSave = true) {
     morningInAdj = adjusted !== morningInMins;
     morningInMins = adjusted;
   }
+  
+  if (morningOutMins != null) {
+    morningOutMins = applyEndRule(morningOutMins);
+  }
 
   if (morningInMins != null && morningOutMins != null) {
     morningHours = Math.max(0, morningOutMins - morningInMins);
@@ -276,6 +288,10 @@ function calculate(isAutoLoad = false, shouldSave = true) {
   let afternoonInMins  = _afternoonInMins;
   let afternoonHours   = 0;
   let afternoonLunchDeduction = 0;
+  
+  if (afternoonOutMins != null) {
+    afternoonOutMins = applyEndRule(afternoonOutMins);
+  }
 
   if (afternoonInMins != null && afternoonOutMins != null) {
     afternoonHours = Math.max(0, afternoonOutMins - afternoonInMins);
@@ -451,8 +467,34 @@ function saveRecord(data) {
 
 let isEditMode = false;
 
-function deleteRecord(dateStr) {
-  if (!confirm(`Are you sure you want to delete the log for ${dateStr}?`)) return;
+// Custom Confirm Modal Logic
+function confirmAction(message) {
+  return new Promise((resolve) => {
+    const overlay = $('confirmModalOverlay');
+    const msgEl = $('confirmModalMessage');
+    const btnCancel = $('btnModalCancel');
+    const btnConfirm = $('btnModalConfirm');
+    
+    msgEl.textContent = message;
+    overlay.classList.add('show');
+    
+    const cleanup = () => {
+      overlay.classList.remove('show');
+      btnCancel.removeEventListener('click', onCancel);
+      btnConfirm.removeEventListener('click', onConfirm);
+    };
+    
+    const onCancel = () => { cleanup(); resolve(false); };
+    const onConfirm = () => { cleanup(); resolve(true); };
+    
+    btnCancel.addEventListener('click', onCancel);
+    btnConfirm.addEventListener('click', onConfirm);
+  });
+}
+
+async function deleteRecord(dateStr) {
+  const confirmed = await confirmAction(`Are you sure you want to delete the log for ${dateStr}?`);
+  if (!confirmed) return;
   
   records = records.filter(r => r.dateStr !== dateStr);
   localStorage.setItem('dtr_records', JSON.stringify(records));
@@ -635,12 +677,64 @@ function renderRecords() {
   }).join('');
 }
 
-function clearRecords() {
-  if (!confirm('Clear all saved DTR records?')) return;
+async function clearRecords() {
+  const confirmed = await confirmAction('Clear all saved DTR records?');
+  if (!confirmed) return;
   records = [];
   localStorage.removeItem('dtr_records');
   recordsCard.style.display = 'none';
   showToast('Records cleared', 'success');
+}
+
+function exportData() {
+  const data = { settings, records };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `DTR_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Data exported successfully', 'success');
+}
+
+function importData() {
+  $('importFileInput').click();
+}
+
+function handleFileImport(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    try {
+      const data = JSON.parse(event.target.result);
+      if (data.records && Array.isArray(data.records)) {
+        records = data.records;
+        localStorage.setItem('dtr_records', JSON.stringify(records));
+        
+        if (data.settings) {
+          Object.assign(settings, data.settings);
+          localStorage.setItem('dtr_settings', JSON.stringify(settings));
+          applySettingsToUI();
+        }
+        
+        renderRecords();
+        loadRecordForDate($('dtrDate').value);
+        closeSettingsPanel();
+        showToast('Data imported successfully!', 'success');
+      } else {
+        showToast('Invalid backup file', 'error');
+      }
+    } catch (err) {
+      showToast('Error reading file', 'error');
+    }
+    $('importFileInput').value = '';
+  };
+  reader.readAsText(file);
 }
 
 function printRecords() {
@@ -771,6 +865,10 @@ function attachListeners() {
     }
     renderRecords();
   });
+  
+  $('btnExportData').addEventListener('click', exportData);
+  $('btnImportData').addEventListener('click', importData);
+  $('importFileInput').addEventListener('change', handleFileImport);
   
   $('btnCalculate').addEventListener('click', () => calculate(false, false));
   $('btnSaveLog').addEventListener('click', () => calculate(false, true));
