@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DTR Calculator – Daily Time Record</title>
+  <meta name="description"
+    content="A powerful Daily Time Record calculator. Track your work hours, set your official start time, and see exactly when you'll finish." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- Background Orbs -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <div class="app-wrapper">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+            <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="header-title">
+          <h1>DTR Calculator</h1>
+          <span class="header-subtitle">Daily Time Record</span>
+        </div>
+      </div>
+      <button class="btn-settings" id="settingsToggle" aria-label="Open settings">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="1.8" />
+          <path
+            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"
+            stroke="currentColor" stroke-width="1.8" />
+        </svg>
+        <span>Settings</span>
+      </button>
+    </header>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+      <div class="settings-inner">
+        <div class="settings-header">
+          <h2>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+              <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="1.8" />
+              <path
+                d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"
+                stroke="currentColor" stroke-width="1.8" />
+            </svg>
+            Settings
+          </h2>
+          <button class="btn-close-settings" id="closeSettings" aria-label="Close settings">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="settings-body">
+          <!-- Official Start Time -->
+          <div class="setting-group">
+            <div class="setting-label-group">
+              <label class="setting-label" for="officialStartTime">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+                  <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+                Official Work Start Time
+              </label>
+              <span class="setting-hint">If you arrive before this time, it counts from this time.</span>
+            </div>
+            <input type="time" class="setting-input" id="officialStartTime" value="08:00" />
+          </div>
+
+          <!-- Official End Time -->
+          <div class="setting-group">
+            <div class="setting-label-group">
+              <label class="setting-label" for="officialEndTime">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+                  <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+                Official Work End Time
+              </label>
+              <span class="setting-hint">Standard end of work day (e.g., 5:00 PM).</span>
+            </div>
+            <input type="time" class="setting-input" id="officialEndTime" value="17:00" />
+          </div>
+
+          <!-- Lunch Start Time -->
+          <div class="setting-group">
+            <div class="setting-label-group">
+              <label class="setting-label" for="lunchStartTime">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Lunch Start Time
+              </label>
+              <span class="setting-hint">Start of official lunch break.</span>
+            </div>
+            <input type="time" class="setting-input" id="lunchStartTime" value="12:00" />
+          </div>
+
+          <!-- Lunch End Time -->
+          <div class="setting-group">
+            <div class="setting-label-group">
+              <label class="setting-label" for="lunchEndTime">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Lunch End Time
+              </label>
+              <span class="setting-hint">End of official lunch break.</span>
+            </div>
+            <input type="time" class="setting-input" id="lunchEndTime" value="13:00" />
+          </div>
+
+          <!-- Required Hours -->
+          <div class="setting-group">
+            <div class="setting-label-group">
+              <label class="setting-label" for="requiredHours">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                  <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8" />
+                  <path d="M8 4v4M16 4v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+                Required Daily Hours
+              </label>
+              <span class="setting-hint">Total hours required per working day.</span>
+            </div>
+            <input type="number" class="setting-input" id="requiredHours" value="8" min="1" max="24" step="0.5" />
+          </div>
+
+          <!-- Total Target Hours -->
+          <div class="setting-group">
+            <div class="setting-label-group">
+              <label class="setting-label" for="totalTargetHours">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+                Total Target Hours (Goal)
+              </label>
+              <span class="setting-hint">Total hours to accomplish overall (e.g. 500 for OJT). Enter 0 to disable.</span>
+            </div>
+            <input type="number" class="setting-input" id="totalTargetHours" value="0" min="0" step="1" />
+          </div>
+
+          <!-- Exclude Weekends -->
+          <div class="setting-group">
+            <div class="setting-label-group">
+              <label class="setting-label">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                  <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8" />
+                  <path d="M8 4v4M16 4v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+                Exclude Weekends
+              </label>
+              <span class="setting-hint">Weekends will not count as working days.</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="excludeWeekends" />
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+            </label>
+          </div>
+
+          <!-- Grace Period -->
+          <div class="setting-group">
+            <div class="setting-label-group">
+              <label class="setting-label" for="gracePeriod">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                  <path
+                    d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+                Grace Period (minutes)
+              </label>
+              <span class="setting-hint">Allowed late arrival before marking as late.</span>
+            </div>
+            <input type="number" class="setting-input" id="gracePeriod" value="0" min="0" max="60" step="1" />
+          </div>
+
+          <button class="btn-save-settings" id="saveSettings">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke="currentColor"
+                stroke-width="1.8" />
+              <path d="M17 21v-8H7v8M7 3v5h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+            Save Settings
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-overlay" id="settingsOverlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Date Picker Section -->
+      <section class="card date-card">
+        <div class="card-header">
+          <div class="card-icon card-icon--blue">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8" />
+              <path d="M8 4v4M16 4v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="card-title">Select Date</h2>
+            <p class="card-desc">Choose the date for this DTR entry</p>
+          </div>
+        </div>
+        <div class="date-input-row">
+          <div class="date-picker-wrapper">
+             <svg class="calendar-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22">
+               <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/>
+               <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+             </svg>
+             <input type="date" class="date-input" id="dtrDate" />
+          </div>
+          <div class="day-badge" id="dayBadge">—</div>
+        </div>
+        <div class="weekend-warning" id="weekendWarning" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+              stroke="currentColor" stroke-width="1.8" />
+            <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          This is a weekend — it won't count as a working day.
+        </div>
+      </section>
+
+      <!-- Time Entry Section -->
+      <section class="card time-entry-card">
+        <div class="card-header">
+          <div class="card-icon card-icon--purple">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+              <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="card-title">Time Entry</h2>
+            <p class="card-desc">Enter your morning and afternoon schedule</p>
+          </div>
+        </div>
+
+        <div class="time-sections">
+          <!-- Morning -->
+          <div class="time-section">
+            <div class="time-section-header">
+              <div class="time-section-badge morning-badge">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
+                  <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8" />
+                  <path
+                    d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+                Morning
+              </div>
+            </div>
+            <div class="time-row">
+              <div class="time-field-group">
+                <label class="time-label" for="morningIn">Time In</label>
+                <div class="time-input-wrapper">
+                  <input type="time" class="time-input" id="morningIn" placeholder="--:--" />
+                  <span class="time-status" id="morningInStatus"></span>
+                </div>
+              </div>
+              <div class="time-divider">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                  <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </div>
+              <div class="time-field-group">
+                <label class="time-label" for="morningOut">Time Out</label>
+                <div class="time-input-wrapper">
+                  <input type="time" class="time-input" id="morningOut" placeholder="--:--" />
+                  <span class="time-status" id="morningOutStatus"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-divider">
+            <span>Break</span>
+          </div>
+
+          <!-- Afternoon -->
+          <div class="time-section">
+            <div class="time-section-header">
+              <div class="time-section-badge afternoon-badge">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
+                  <path d="M17 12a5 5 0 11-10 0 5 5 0 0110 0z" stroke="currentColor" stroke-width="1.8" />
+                  <path
+                    d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+                Afternoon
+              </div>
+            </div>
+            <div class="time-row">
+              <div class="time-field-group">
+                <label class="time-label" for="afternoonIn">Time In</label>
+                <div class="time-input-wrapper">
+                  <input type="time" class="time-input" id="afternoonIn" placeholder="--:--" />
+                  <span class="time-status" id="afternoonInStatus"></span>
+                </div>
+              </div>
+              <div class="time-divider">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                  <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </div>
+              <div class="time-field-group">
+                <label class="time-label" for="afternoonOut">Time Out</label>
+                <div class="time-input-wrapper">
+                  <input type="time" class="time-input" id="afternoonOut" placeholder="--:--" />
+                  <span class="time-status" id="afternoonOutStatus"></span>
+                </div>
+              </div>
+            </div>
+            
+            <div id="btnToggleOvertime" style="display: flex; align-items: center; gap: 8px; margin-top: 18px; padding: 10px 14px; background: rgba(239,68,68,0.08); border: 1px dashed rgba(239,68,68,0.3); border-radius: 12px; color: #fca5a5; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; width: max-content;">
+              <div style="width: 22px; height: 22px; border-radius: 50%; background: rgba(239,68,68,0.2); display: grid; place-items: center;">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14" id="iconToggleOvertime">
+                  <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span id="txtToggleOvertime">Add Overtime</span>
+            </div>
+
+            <!-- Overtime Block (Hidden by default) -->
+            <div id="overtimeSection" style="display: none; margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--border);">
+              <div class="time-section-header">
+                <span class="time-section-badge overtime-badge">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14" style="margin-right: 4px;">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  OVERTIME
+                </span>
+              </div>
+              <div class="time-row">
+                <div class="time-field-group">
+                  <label class="time-label" for="overtimeIn">Time In</label>
+                  <div class="time-input-wrapper">
+                    <input type="time" class="time-input" id="overtimeIn" placeholder="--:--" />
+                    <span class="time-status" id="overtimeInStatus"></span>
+                  </div>
+                </div>
+                <div class="time-divider">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                    <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </div>
+                <div class="time-field-group">
+                  <label class="time-label" for="overtimeOut">Time Out</label>
+                  <div class="time-input-wrapper">
+                    <input type="time" class="time-input" id="overtimeOut" placeholder="--:--" />
+                    <span class="time-status" id="overtimeOutStatus"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 20px;">
+          <button class="btn-calculate" id="btnCalculate" style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border); box-shadow: none;">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+              <rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor" stroke-width="1.8" />
+              <path d="M8 6h8M8 10h8M8 14h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+            Preview
+          </button>
+          <button class="btn-calculate" id="btnSaveLog" style="flex: 2;">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M17 21v-8H7v8M7 3v5h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Save Record
+          </button>
+          <button class="btn-calculate" id="btnNextDay" style="flex: 1; background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); color: var(--accent); box-shadow: none;">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+              <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            Next Day
+          </button>
+        </div>
+      </section>
+
+      <!-- Results Section -->
+      <section class="results-section" id="resultsSection" style="display:none;">
+        <!-- Summary Cards -->
+        <div class="results-grid">
+          <div class="result-card result-card--hours">
+            <div class="result-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+                <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+            </div>
+            <div class="result-value" id="totalHours">0h 0m</div>
+            <div class="result-label">Hours Accomplished</div>
+          </div>
+
+          <div class="result-card result-card--finish">
+            <div class="result-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" />
+                <path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </div>
+            <div class="result-value" id="finishTime">—</div>
+            <div class="result-label">Estimated Finish Time</div>
+          </div>
+
+          <div class="result-card result-card--status">
+            <div class="result-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+                <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+            </div>
+            <div class="result-value" id="attendanceStatus">—</div>
+            <div class="result-label">Attendance Status</div>
+          </div>
+
+          <div class="result-card result-card--remaining">
+            <div class="result-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M12 5l7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </div>
+            <div class="result-value" id="remainingHours">—</div>
+            <div class="result-label">Hours Remaining</div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="card progress-card">
+          <div class="progress-header">
+            <span class="progress-label">Work Day Progress</span>
+            <span class="progress-pct" id="progressPct">0%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progressFill" style="width: 0%"></div>
+          </div>
+          <div class="progress-timeline">
+            <span id="progressStart">—</span>
+            <span id="progressEnd">—</span>
+          </div>
+        </div>
+
+        <!-- Breakdown -->
+        <div class="card breakdown-card">
+          <div class="card-header">
+            <div class="card-icon card-icon--green">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor"
+                  stroke-width="1.8" />
+                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="card-title">Time Breakdown</h2>
+              <p class="card-desc">Detailed view of your schedule</p>
+            </div>
+          </div>
+          <div class="breakdown-table">
+            <div class="breakdown-row breakdown-header">
+              <span>Period</span>
+              <span>Time In</span>
+              <span>Time Out</span>
+              <span>Hours</span>
+            </div>
+            <div class="breakdown-row" id="morningRow">
+              <span class="period-tag morning-tag">Morning</span>
+              <span id="breakdownMorningIn">—</span>
+              <span id="breakdownMorningOut">—</span>
+              <span class="hours-cell" id="breakdownMorningHours">—</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="period-tag afternoon-tag">Afternoon</span>
+              <span id="breakdownAfternoonIn">—</span>
+              <span id="breakdownAfternoonOut">—</span>
+              <span class="hours-cell" id="breakdownAfternoonHours">—</span>
+            </div>
+            <div class="breakdown-row" id="breakdownOvertimeRow" style="display: none;">
+              <span class="period-tag overtime-badge" style="border: none;">Overtime</span>
+              <span id="breakdownOvertimeIn">—</span>
+              <span id="breakdownOvertimeOut">—</span>
+              <span class="hours-cell" id="breakdownOvertimeHours">—</span>
+            </div>
+            <div class="breakdown-row breakdown-total">
+              <span class="breakdown-header">Total Accomplished</span>
+              <span></span>
+              <span></span>
+              <span class="hours-cell" id="breakdownTotal" style="color: #fff; font-size: 1rem;">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="notes-card" id="notesCard" style="display:none;">
+          <div class="notes-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+                stroke="currentColor" stroke-width="1.8" />
+              <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" />
+            </svg>
+          </div>
+          <div class="notes-content" id="notesContent"></div>
+        </div>
+      </section>
+
+      <!-- Records Section -->
+      <section class="card records-card" id="recordsCard" style="display:none;">
+        <div class="card-header">
+          <div class="card-icon card-icon--orange">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 3h18v18H3zM3 9h18M9 21V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="card-title">Saved Records</h2>
+            <p class="card-desc">All your DTR entries this month</p>
+          </div>
+          <div style="margin-left: auto; display: flex; gap: 8px;">
+            <select id="monthFilter" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 0 10px; font-size: 0.8rem; font-weight: 600; font-family: inherit; outline: none; cursor: pointer;">
+              <option value="all" style="background: #12141f;">All Months</option>
+            </select>
+            <button class="btn-clear-records" id="btnEditLogs" style="color: var(--orange); border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.1);">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
+                <path d="M15.232 5.232l3.536 3.536M16.5 2.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 2.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Edit Logs
+            </button>
+            <button class="btn-clear-records" id="btnPrintRecords" style="color: var(--blue); border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.1);">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
+                <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6v-8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              </svg>
+              Print / PDF
+            </button>
+            <button class="btn-clear-records" id="btnClearRecords">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
+                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"
+                  stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              Clear All
+            </button>
+          </div>
+        </div>
+        <div class="records-summary" id="recordsSummary"></div>
+        <div class="records-list" id="recordsList"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="printArea"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
