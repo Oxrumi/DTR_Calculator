@@ -656,7 +656,7 @@ function renderRecords() {
     if (hasOt) timesStr += ` / OT: ${fmt(r.overtimeIn)} – ${fmt(r.overtimeOut)}`;
 
     return `
-      <div class="record-item">
+      <div class="record-item" onclick="previewLog('${r.dateStr}')">
         <div class="record-date">
           ${dateLabel}
           <span><span class="record-status-dot ${dotClass}"></span>${r.status}</span>
@@ -665,7 +665,7 @@ function renderRecords() {
         <div class="record-hours" style="display: flex; align-items: center; justify-content: flex-end;">
           ${toHMStr(r.totalMins)}
           ${isEditMode ? `
-            <div class="btn-delete-record" onclick="deleteRecord('${r.dateStr}')" title="Delete Log">
+            <div class="btn-delete-record" onclick="event.stopPropagation(); deleteRecord('${r.dateStr}')" title="Delete Log">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
                 <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -894,22 +894,11 @@ function attachListeners() {
       const mm = String(d.getMonth() + 1).padStart(2, '0');
       const dd = String(d.getDate()).padStart(2, '0');
       const newDateStr = `${yyyy}-${mm}-${dd}`;
-
-      const fp = $('dtrDate')._flatpickr;
-      if (fp) {
-        fp.setDate(newDateStr, true); // true triggers onChange
-      } else {
-        $('dtrDate').value = newDateStr;
-        updateDayBadge(newDateStr);
-        loadRecordForDate(newDateStr);
-      }
-      
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      $('morningIn').focus();
+      previewLog(newDateStr);
     }
   });
 
-  // Flatpickr handles the change event, so we don't strictly need this, 
+  // Flatpickr handles the change event, so we don't strictly need this,  
   // but keep it as a fallback for direct value changes.
   $('dtrDate').addEventListener('change', e => {
     updateDayBadge(e.target.value);
@@ -942,6 +931,20 @@ function updateAllTimeHints() {
       badge.className = 'time-status';
     }
   }
+}
+
+function previewLog(dateStr) {
+  const fp = $('dtrDate')._flatpickr;
+  if (fp) {
+    fp.setDate(dateStr, true); // true triggers onChange which calls loadRecordForDate
+  } else {
+    $('dtrDate').value = dateStr;
+    updateDayBadge(dateStr);
+    loadRecordForDate(dateStr);
+  }
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  $('morningIn').focus();
 }
 
 // ─── Start ────────────────────────────────────────────────────────────────────
