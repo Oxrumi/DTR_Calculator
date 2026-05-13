@@ -423,10 +423,25 @@ body {
   border-color: rgba(139,92,246,0.3);
   transform: translateY(-1px);
 }
+.record-item.empty {
+  opacity: 0.5;
+  border-style: dashed;
+}
+.record-item.empty:hover {
+  opacity: 0.8;
+  border-color: var(--border);
+}
 .record-date { font-weight: 600; }
 .record-date span { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 400; }
 .record-times { color: var(--text-sub); font-size: 0.78rem; }
 .record-hours { font-weight: 700; color: var(--accent); text-align: right; }
+
+.week-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.week-title { 
+  font-size: 0.8rem; font-weight: 700; color: var(--accent); 
+  text-transform: uppercase; letter-spacing: 0.06em; 
+  margin-bottom: 4px; padding-bottom: 6px; border-bottom: 1px solid var(--border); 
+}
 .record-status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 5px; }
 .dot-complete { background: var(--green); }
 .dot-partial { background: var(--orange); }

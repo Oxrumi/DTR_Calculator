@@ -641,40 +641,101 @@ function renderRecords() {
     ${targetProgressHtml}
   `;
 
-  list.innerHTML = records.map(r => {
+  function formatLocalISO(d) {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  const weeks = {};
+  records.forEach(r => {
     const d = new Date(r.dateStr + 'T00:00:00');
-    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    const months   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const dateLabel = `${dayNames[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}`;
-    const isComplete = r.status.includes('Complete');
-    const isLate     = r.status.includes('Late');
-    const dotClass   = isComplete ? 'dot-complete' : isLate ? 'dot-late' : 'dot-partial';
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(d.getFullYear(), d.getMonth(), diff);
+    const monStr = formatLocalISO(monday);
+    
+    if (!weeks[monStr]) weeks[monStr] = [];
+    weeks[monStr].push(r);
+  });
 
-    const fmt = t => t ? toTimeStr(toMins(t)) : '—';
-    const hasOt = r.overtimeIn || r.overtimeOut;
-    let timesStr = `${fmt(r.morningIn)} – ${fmt(r.morningOut)} / ${fmt(r.afternoonIn)} – ${fmt(r.afternoonOut)}`;
-    if (hasOt) timesStr += ` / OT: ${fmt(r.overtimeIn)} – ${fmt(r.overtimeOut)}`;
+  const sortedWeekKeys = Object.keys(weeks).sort();
+  let html = '';
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-    return `
-      <div class="record-item" onclick="previewLog('${r.dateStr}')">
-        <div class="record-date">
-          ${dateLabel}
-          <span><span class="record-status-dot ${dotClass}"></span>${r.status}</span>
-        </div>
-        <div class="record-times">${timesStr}</div>
-        <div class="record-hours" style="display: flex; align-items: center; justify-content: flex-end;">
-          ${toHMStr(r.totalMins)}
-          ${isEditMode ? `
-            <div class="btn-delete-record" onclick="event.stopPropagation(); deleteRecord('${r.dateStr}')" title="Delete Log">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
-                <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-          ` : ''}
-        </div>
+  sortedWeekKeys.forEach((monStr, idx) => {
+    const monday = new Date(monStr + 'T00:00:00');
+    const sunday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 6);
+    const weekRecords = weeks[monStr];
+    const weekTotalMins = weekRecords.reduce((sum, r) => sum + r.totalMins, 0);
+    const weekTotalStr = toHMStr(weekTotalMins);
+    
+    html += `<div class="week-group">`;
+    html += `
+      <div class="week-title" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Week ${idx + 1} <span style="color: var(--text-muted); font-size: 0.75rem; font-weight: 500;">(${months[monday.getMonth()]} ${monday.getDate()} - ${months[sunday.getMonth()]} ${sunday.getDate()})</span></span>
+        <span style="background: rgba(139,92,246,0.15); color: var(--accent); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem;">${weekTotalStr}</span>
       </div>
     `;
-  }).join('');
+    
+    const daysInWeek = settings.excludeWeekends ? 5 : 7;
+    
+    for (let i = 0; i < daysInWeek; i++) {
+      const curDate = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i);
+      const curStr = formatLocalISO(curDate);
+      
+      const r = weekRecords.find(x => x.dateStr === curStr);
+      const dLabel = `${dayNames[curDate.getDay()]}, ${months[curDate.getMonth()]} ${curDate.getDate()}`;
+      
+      if (r) {
+        const isComplete = r.status.includes('Complete');
+        const isLate     = r.status.includes('Late');
+        const dotClass   = isComplete ? 'dot-complete' : isLate ? 'dot-late' : 'dot-partial';
+
+        const fmt = t => t ? toTimeStr(toMins(t)) : '—';
+        const hasOt = r.overtimeIn || r.overtimeOut;
+        let timesStr = `${fmt(r.morningIn)} – ${fmt(r.morningOut)} / ${fmt(r.afternoonIn)} – ${fmt(r.afternoonOut)}`;
+        if (hasOt) timesStr += ` / OT: ${fmt(r.overtimeIn)} – ${fmt(r.overtimeOut)}`;
+
+        html += `
+          <div class="record-item" onclick="previewLog('${r.dateStr}')">
+            <div class="record-date">
+              ${dLabel}
+              <span><span class="record-status-dot ${dotClass}"></span>${r.status}</span>
+            </div>
+            <div class="record-times">${timesStr}</div>
+            <div class="record-hours" style="display: flex; align-items: center; justify-content: flex-end;">
+              ${toHMStr(r.totalMins)}
+              ${isEditMode ? `
+                <div class="btn-delete-record" onclick="event.stopPropagation(); deleteRecord('${r.dateStr}')" title="Delete Log">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
+                    <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      } else {
+        html += `
+          <div class="record-item empty" onclick="previewLog('${curStr}')">
+            <div class="record-date">
+              ${dLabel}
+              <span>No Log</span>
+            </div>
+            <div class="record-times">—</div>
+            <div class="record-hours" style="display: flex; align-items: center; justify-content: flex-end;">—</div>
+          </div>
+        `;
+      }
+    }
+    
+    html += `</div>`;
+  });
+  
+  list.innerHTML = html;
 }
 
 async function clearRecords() {
