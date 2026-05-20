@@ -143,6 +143,7 @@ function loadRecordForDate(dateStr) {
     $('afternoonOut').value = existing.afternoonOut || '';
     $('overtimeIn').value = existing.overtimeIn || '';
     $('overtimeOut').value = existing.overtimeOut || '';
+    $('halfDayToggle').checked = !!existing.isHalfDay;
     
     if (existing.overtimeIn || existing.overtimeOut) {
       setOvertimeActive(true);
@@ -158,6 +159,7 @@ function loadRecordForDate(dateStr) {
     $('afternoonOut').value = '';
     $('overtimeIn').value = '';
     $('overtimeOut').value = '';
+    $('halfDayToggle').checked = false;
     setOvertimeActive(false);
     resultsSection.style.display = 'none';
   }
@@ -240,7 +242,8 @@ function calculate(isAutoLoad = false, shouldSave = true) {
   }
 
   const officialStart = toMins(settings.officialStartTime);
-  const requiredMins  = settings.requiredHours * 60;
+  const isHalfDay     = $('halfDayToggle').checked;
+  const requiredMins  = isHalfDay ? (settings.requiredHours * 60) / 2 : settings.requiredHours * 60;
 
   const lunchStartMins = toMins(settings.lunchStartTime);
   const lunchEndMins   = toMins(settings.lunchEndTime);
@@ -333,7 +336,7 @@ function calculate(isAutoLoad = false, shouldSave = true) {
   const rawMorningInMins = toMins(rawMorningIn);
 
   if (totalMins >= requiredMins) {
-    statusText  = 'Complete ✓';
+    statusText  = isHalfDay ? 'Complete (Half) ✓' : 'Complete ✓';
     statusClass = 'status-complete';
   } else if (rawMorningInMins != null && rawMorningInMins > officialStartMins + settings.gracePeriod) {
     statusText  = 'Late';
@@ -410,7 +413,8 @@ function calculate(isAutoLoad = false, shouldSave = true) {
   if (shouldSave) {
     saveRecord({ 
       dateStr, morningInMins, morningOutMins, afternoonInMins, afternoonOutMins, totalMins, statusText, 
-      rawMorningIn, rawMorningOut, rawAfternoonIn, rawAfternoonOut, rawOvertimeIn, rawOvertimeOut 
+      rawMorningIn, rawMorningOut, rawAfternoonIn, rawAfternoonOut, rawOvertimeIn, rawOvertimeOut,
+      isHalfDay
     });
 
     if (!isAutoLoad) {
@@ -451,6 +455,7 @@ function saveRecord(data) {
     overtimeOut: data.rawOvertimeOut,
     totalMins: data.totalMins,
     status: data.statusText,
+    isHalfDay: data.isHalfDay,
   };
   const existing = records.findIndex(r => r.dateStr === data.dateStr);
   if (existing >= 0) {
@@ -903,6 +908,8 @@ function attachListeners() {
     setOvertimeActive(!isOvertimeActive);
     if (!isOvertimeActive) calculate(false, false); // recalc when OT is removed
   });
+  
+  $('halfDayToggle').addEventListener('change', () => calculate(false, false));
   
   $('btnEditLogs').addEventListener('click', () => {
     isEditMode = !isEditMode;

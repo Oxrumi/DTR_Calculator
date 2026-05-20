@@ -265,17 +265,26 @@
 
       <!-- Time Entry Section -->
       <section class="card time-entry-card">
-        <div class="card-header">
-          <div class="card-icon card-icon--purple">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
-              <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-            </svg>
+        <div class="card-header" style="justify-content: space-between; align-items: center; width: 100%;">
+          <div style="display: flex; gap: 14px; align-items: center;">
+            <div class="card-icon card-icon--purple">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+                <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="card-title">Time Entry</h2>
+              <p class="card-desc">Enter your morning and afternoon schedule</p>
+            </div>
           </div>
-          <div>
-            <h2 class="card-title">Time Entry</h2>
-            <p class="card-desc">Enter your morning and afternoon schedule</p>
-          </div>
+          <label class="toggle-switch" style="display: flex; align-items: center; gap: 8px;" title="Check if only working a half day">
+            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text);">Half Day</span>
+            <input type="checkbox" id="halfDayToggle" />
+            <span class="toggle-track">
+              <span class="toggle-thumb"></span>
+            </span>
+          </label>
         </div>
 
         <div class="time-sections">
